@@ -29,15 +29,15 @@ d4 f x = f x
 
 -- (5) 1 point.
 d5 :: (a -> (b -> c)) -> ((a -> b) -> (a -> c))
-d5 = undefined
+d5 f g = \x -> f x (g x)
 
 -- (6) 1 point.
 curry' :: ((a, b) -> c) -> a -> b -> c
-curry' = undefined
+curry' f x y = f (x,y)
 
 -- (7) 1 point.
 uncurry' :: (a -> b -> c) -> (a, b) -> c
-uncurry' = undefined
+uncurry' f (x,y) = f x y
 
 -- Problem 2 (2 points): Use pattern matching and recursion to define the
 -- following 'myDrop' function. 
@@ -126,4 +126,4 @@ myFilter f (x:xs) =
 -- Define another version of myFilter' that uses myfoldr without using
 -- pattern matching and recursion. 
 myFilter' :: (a -> Bool) -> [a] -> [a]
-myFilter' = undefined
+myFilter' f xs = myfoldr (\x acc -> if f x then x : acc else acc) [] xs
