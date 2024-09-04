@@ -1,4 +1,3 @@
-import Data.Sequence (Seq())
 -- primes = [x | x <- [2 .. ], and [x 'mod' y /= 0 | y <- [2..x-1]]]
 
 -- fibonacci sequence methods
@@ -27,3 +26,4 @@ leaf x = Node x Empty Empty
 height :: Tree a -> Int
 height Empty = 0
 height (Node x l r) = 1 + max (height l) (height r)
+
