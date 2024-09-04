@@ -7,10 +7,8 @@
 -- Problem 0. (2 points). Define an infinite list of 2's powers. 
 -- e.g. take 10 xs = [1,2,4,8,16,32,64,128,256,512]
 -- Note: your solution must be a one-liner. 
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Redundant bracket" #-}
 xs :: [Integer]
-xs = undefined 
+xs = map (2^) [0..]
 
 -- Bonus Problem (2 points). Define an infinte list that contains all the rows in Pascal's triangle (https://en.wikipedia.org/wiki/Pascal%27s_triangle).
 -- E.g., take 10 ys == [[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1],[1,5,10,10,5,1],[1,6,15,20,15,6,1],[1,7,21,35,35,21,7,1],[1,8,28,56,70,56,28,8,1],[1,9,36,84,126,126,84,36,9,1]]
@@ -61,25 +59,45 @@ tree1 = Node "my-app" [
 
 -- Problem 2 (2 points). Define a map function for rose tree.
 mapRose :: (a -> b) -> RoseTree a -> RoseTree b
-mapRose = undefined
+mapRose f (Node a []) = Node (f a) []
+mapRose f (Node a b) = Node (f a) (mapRoseArray f b)
 
+mapRoseArray :: (a -> b) -> [RoseTree a] -> [RoseTree b]
+mapRoseArray f [] = []
+mapRoseArray f (x:xs) = mapRose f x : mapRoseArray f xs
 
 -- Problem 3 (2 points). Define a function that returns the total number of nodes in a rose tree
 nodes :: RoseTree a -> Int
-nodes = undefined
+nodes (Node a []) = 1
+nodes (Node a b) = nodesArray b + 1
+
+nodesArray :: [RoseTree a] -> Int
+nodesArray [] = 0
+nodesArray (x:xs) = nodes x + nodesArray xs
 
 
 -- Problem 4 (2 points). Define a function that does a depth-first traversal on a rose tree.
 -- E.g., depthFirst tree1 == ["node_modules","favicon.ico","index.html","robots.txt","public","index.css","index.js","src",".gitignore","package.json","README.md","my-app"] 
 depthFirst :: RoseTree a -> [a]
-depthFirst = undefined
+depthFirst (Node a []) = [a]
+depthFirst (Node a b) = depthFirstArray b ++ [a]
+
+depthFirstArray :: [RoseTree a] -> [a]
+depthFirstArray [] = []
+depthFirstArray (x:xs) = depthFirst x ++ depthFirstArray xs
 
 
 
 -- Problem 5 (2 points). Define a function that does a breadth-first traversal on a rose tree.
 -- E.g., breadthFirst tree1 == ["my-app","node_modules","public","src",".gitignore","package.json","README.md","favicon.ico","index.html","robots.txt","index.css","index.js"]
 breadthFirst :: RoseTree a -> [a]
-breadthFirst = undefined
+breadthFirst a = breadthFirstHelper [a]
+
+breadthFirstHelper :: [RoseTree a] -> [a]
+breadthFirstHelper [] = []
+breadthFirstHelper (Node a b : rest) = a : breadthFirstHelper (rest ++ b)
+
+
 
 
 
