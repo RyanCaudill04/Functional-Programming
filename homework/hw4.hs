@@ -1,6 +1,7 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# OPTIONS_GHC -Wno-deferred-out-of-scope-variables #-}
 import GHC.Float (fabsDouble)
+import System.Console.Terminfo (functionKey)
 -- Note: Your file must be free of typing errors. If your file can not
 -- be loaded into ghci, then you will get 0 point. Please read the instructions
 -- for each problem carefully. Failure to follow the instructions may result in
@@ -27,8 +28,11 @@ instance Applicative' Maybe where
 
 instance Applicative' [] where
   pure' a = [a]
-  app fs xs = [f x | f <- fs, x <- xs]
-
+  -- app fs xs = [f x | f <- fs, x <- xs]
+  app fs xs = do
+    f <- fs
+    x <- xs
+    pure' (f x)
 
 -- Note: your definition must give the following
 -- results. 
@@ -42,8 +46,11 @@ instance Applicative' [] where
 -- using only pattern matching, recursion, pure' and app.
 sequenceA' :: Applicative' f => [f a] -> f [a]
 sequenceA' [] = pure' []
-sequenceA' (x:xs) = undefined
-
+-- sequenceA' (x:xs) = app (app (pure' (:) ) x) (sequenceA' xs)
+sequenceA' (x:xs) = do
+  x' <- x
+  xs' <- sequenceA' xs
+  pure' (x':xs')
 
 -- Your definition must give the following results. 
 -- > sequenceA' [Just 1, Nothing, Just 2]
@@ -63,4 +70,8 @@ pure'' :: (Monad' f) => a -> f a
 pure'' = return'
 
 app'' :: (Monad' f) => f (a -> b) -> f a -> f b
-app'' func fa = func `bind'` \f -> fa `bind'` \a -> return' (f a)
+-- app'' func fa = func `bind'` \f -> fa `bind'` \a -> return' (f a)
+app'' ff fa = do
+  f <- func
+  a <- fa
+  return' (f a)
