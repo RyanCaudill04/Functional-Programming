@@ -1,4 +1,6 @@
 {-# LANGUAGE InstanceSigs #-}
+{-# OPTIONS_GHC -Wno-deferred-out-of-scope-variables #-}
+import GHC.Float (fabsDouble)
 -- Note: Your file must be free of typing errors. If your file can not
 -- be loaded into ghci, then you will get 0 point. Please read the instructions
 -- for each problem carefully. Failure to follow the instructions may result in
@@ -7,7 +9,7 @@
 -- The so-called "applicative functor" is
 -- defined by the following type class. 
 class (Functor f) => Applicative' f where
-  pure' :: a -> f a 
+  pure' :: a -> f a
   app :: f (a -> b) -> f a -> f b
 
 -- Problem 1 (2 points). Show that Maybe is an instance
@@ -19,7 +21,7 @@ instance Applicative' Maybe where
   app f Nothing = Nothing
   app Nothing a = Nothing
 
-    
+
 -- Problem 2 (2 points). Show that list [] is an instance
 -- of Applicative' by defining an instance declaration.
 
@@ -58,8 +60,7 @@ class (Functor m) => Monad' m where
 -- Problem 4. (3 points). We can show a monad is also an applicative by the following.
 
 pure'' :: (Monad' f) => a -> f a
-pure'' a = return' a
+pure'' = return'
 
 app'' :: (Monad' f) => f (a -> b) -> f a -> f b
-app'' f a = do
-  
+app'' func fa = func `bind'` \f -> fa `bind'` \a -> return' (f a)
