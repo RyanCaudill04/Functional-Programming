@@ -46,11 +46,11 @@ instance Applicative' [] where
 -- using only pattern matching, recursion, pure' and app.
 sequenceA' :: Applicative' f => [f a] -> f [a]
 sequenceA' [] = pure' []
--- sequenceA' (x:xs) = app (app (pure' (:) ) x) (sequenceA' xs)
-sequenceA' (x:xs) = do
-  x' <- x
-  xs' <- sequenceA' xs
-  pure' (x':xs')
+sequenceA' (x:xs) = app (app (pure' (:) ) x) (sequenceA' xs)
+-- sequenceA' (x:xs) = do
+--  x' <- x
+--  xs' <- sequenceA' xs
+--  pure' (x':xs')
 
 -- Your definition must give the following results. 
 -- > sequenceA' [Just 1, Nothing, Just 2]
@@ -70,8 +70,8 @@ pure'' :: (Monad' f) => a -> f a
 pure'' = return'
 
 app'' :: (Monad' f) => f (a -> b) -> f a -> f b
--- app'' func fa = func `bind'` \f -> fa `bind'` \a -> return' (f a)
-app'' ff fa = do
-  f <- func
-  a <- fa
-  return' (f a)
+app'' func fa = func `bind'` \f -> fa `bind'` \a -> return' (f a)
+-- app'' ff fa = do
+--  f <- ff
+--  a <- fa
+--  return' (f a)
