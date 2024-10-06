@@ -1,17 +1,12 @@
 {-# LANGUAGE InstanceSigs #-}
-data Parser a = P (String -> Maybe (a,String))
-
 instance Functor Parser where
   fmap :: (a -> b) -> Parser a -> Parser b
   fmap f (P p) =
     P $ \ s -> fmap (\ (x, s') -> (f x, s')) (p s)
-    -- P $ \ s -> case p s of
-    --              Nothing -> Nothing
-    --              Just (x, s') -> Just (f x, s')
     
 instance Applicative Parser where
 
-
+data Parser a = P (String -> Maybe (a,String))
 
 instance Monad Parser where
   return :: a -> Parser a
@@ -73,23 +68,70 @@ string (x:xs) = do
   ys <- string xs
   return (y:ys)
 
-noneOf :: [Char] -> Parser Char
-noneOf str = do
-  c <- item
-  if c `elem` str then zero 
-    else return c
-
+-- Apply a parser zero or more times. 
 many :: Parser a -> Parser [a]
-many p = do{
-  x <- p;
-  xs <- many p;
-  return (x:xs)} <|> return []
+many p =
+  do{
+    x <- p;
+    xs <- many p;
+    return (x:xs)} <|> return []
 
+-- Apply a parser one or more times. 
 many1 :: Parser a -> Parser [a]
-many1 p = do
+many1 p = do 
   x <- p
   xs <- many p
   return (x:xs)
+  
+-- sepBy p sep parses zero or more occurrences of p,
+-- separated by sep. Returns a list of values returned by p.
+sepby :: Parser a -> Parser b -> Parser [a]
+p `sepby` sep =
+  do{ x <- p;
+      xs <- many (sep >> p);
+      return (x:xs)
+    } <|> return []
+  
+sepby1 :: Parser a -> Parser b -> Parser [a]
+p `sepby1` sep = 
+  do{ x <- p;
+      xs <- many (sep >> p);
+      return (x:xs)
+    }
 
-sepBy :: Parser a -> Parser b -> Parser [a]
-p `sepBy` sep = undefined
+-- A simple CSV parser
+csv :: Parser [[String]]
+csv = many line
+
+line :: Parser [String]
+line = do
+  cs <- content `sepby1` comma
+  (char '\n' >> return ()) <|> eof
+  return cs
+
+comma :: Parser Char
+comma = char ','
+
+-- parse a charactor as long as it is not one of the charactor
+-- in the input string.
+noneOf :: [Char] -> Parser Char
+noneOf str = do
+  c <- item
+  if elem c str then zero
+    else return c
+
+content :: Parser String
+content = many1 (noneOf ",;.\n")
+
+
+
+
+  
+  
+  
+
+
+
+                         
+          
+    
