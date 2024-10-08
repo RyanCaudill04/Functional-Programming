@@ -52,12 +52,12 @@ digits = token $ do
 -- the separator as an operation, and the operation
 -- is assumed to be left associated. 
 chainl :: Parser a -> Parser (a -> a -> a) -> Parser a
-chainl p op = do {
-   x <- p;
-   f <- op;
-   y <- p;
-   chainl (return $ f x y) op
-   } <|> p
+chainl p op = do
+  a <- p
+  rest a
+  where rest x =
+          do{ f <- op; b <- p ; rest (f x b)}
+          <|> return x
 
 
 -- Problem 3. (2 points). Define 'addop' that parses a '+' or a '-' symbol and then
@@ -95,6 +95,8 @@ mulop = token $
 -- factor ::= digits | '(' expr ')'
 
 -- Problem 5. (6 points) Define a parser for expr. Hint: you may find `chainl` useful.  
+
+-- Helper "factor" solves all expressions inside of parentheses
 factor :: Parser Int
 factor = digits <|> do
   char '('
@@ -102,9 +104,11 @@ factor = digits <|> do
   char ')'
   return e
 
+-- Helper "term" solves parentheses, then multiplication/division ops
 term :: Parser Int
 term = chainl factor mulop
 
+-- Final "expr" solves all ops
 expr :: Parser Int
 expr = chainl term addop
 
