@@ -11,33 +11,33 @@
 
 -- (1) 1 point.
 d1 :: a -> (a, a)
-d1 = undefined
+d1 a = (a,a)
 
 
 -- (2) 1 point.
 d2 :: a -> a 
-d2 = undefined
+d2 a = a
 
 -- (3) 1 point.
 d3 :: a -> b -> a 
-d3 = undefined
+d3 a b = a
 
 
 -- (4) 1 point.
 d4 :: (a -> b) -> a -> b
-d4 = undefined 
+d4 f a = f a 
 
 -- (5) 1 point.
 d5 ::  (a -> (b -> c)) -> ((a -> b) -> (a -> c))
-d5 = undefined 
+d5 = undefined
 
 -- (6) 1 point.
 curry' :: ((a, b) -> c) -> a -> b -> c
-curry' = undefined
+curry' f a b = f (a,b)
 
 -- (7) 1 point.
 uncurry' :: (a -> b -> c) -> (a, b) -> c
-uncurry' = undefined
+uncurry' f (a,b) = f a b
 
 -- Problem 2 (2 points): Use pattern matching and recursion to define the
 -- following 'myDrop' function. 

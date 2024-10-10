@@ -11,7 +11,8 @@ data RoseTree a = Node a [RoseTree a] deriving (Show)
 
 -- Problem 1. (2 points) Define an instance to make RoseTree an instance of
 -- Eq class.
-
+instance Eq a => Eq (RoseTree a) where
+  (==) (Node a b) (Node x y) = a == x && b == y
 
 -- Recall the following definition of monoid. 
 class MyMonoid a where
@@ -21,6 +22,8 @@ class MyMonoid a where
 -- Problem 2. (2 points). Complete the following
 -- instance definition.
 instance MyMonoid (a -> a) where 
+  mempty' = id
+  mappend' = (.)
 
 
 -- Consider the following MyFoldable type class.
@@ -35,14 +38,15 @@ instance MyFoldable Maybe where
 
 -- Problem 3. (2 points) Define list as instance of MyFoldable
 instance MyFoldable [] where
-
+  myfoldMap f (x:xs) = mappend' (f x) (myfoldMap f xs)
+  myfoldMap _ [] = mempty'
 
 -- Problem 4. (2 points) Define myfoldr using only myfoldMap.
 -- Note: Your definition must be a one-liner.  
 -- Hint: note that (b -> b) is already an instance of MyMonoid
 
 myfoldr :: (MyFoldable t) => (a -> b -> b) -> b -> t a -> b
-myfoldr = undefined
+myfoldr f b a = myfoldMap f a b
 
 -- Your definitions must be so that the following code calculate the sum
 -- of a int list.

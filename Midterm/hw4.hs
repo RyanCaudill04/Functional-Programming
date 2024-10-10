@@ -1,4 +1,5 @@
 {-# LANGUAGE InstanceSigs #-}
+import Control.Exception (Exception(fromException))
 -- Note: Your file must be free of typing errors. If your file can not
 -- be loaded into ghci, then you will get 0 point. Please read the instructions
 -- for each problem carefully. Failure to follow the instructions may result in
@@ -14,11 +15,19 @@ class (Functor f) => Applicative' f where
 -- of Applicative' by defining an instance declaration.
 
 instance Applicative' Maybe where
-    
+  pure' = Just
+  app (Just f) (Just a) = Just (f a)
+  app _ _ = Nothing
+
 -- Problem 2 (2 points). Show that list [] is an instance
 -- of Applicative' by defining an instance declaration.
 
 instance Applicative' [] where
+  pure' a = [a]
+  app fs xs = do
+    f <- fs
+    x <- xs
+    pure' (f x)
 
 -- Note: your definition must give the following
 -- results. 
@@ -31,7 +40,8 @@ instance Applicative' [] where
 -- Problem 3 (2 points). Define the following sequencing function
 -- using only pattern matching, recursion, pure' and app.
 sequenceA' :: Applicative' f => [f a] -> f [a]
-sequenceA' = undefined
+sequenceA' [] = pure' []
+sequenceA' (x:xs) = undefined 
 
 
 -- Your definition must give the following results. 
@@ -49,10 +59,16 @@ class (Functor m) => Monad' m where
 -- Problem 4. (3 points). We can show a monad is also an applicative by the following.
 
 pure'' :: (Monad' f) => a -> f a
-pure'' = undefined
+pure'' = return'
 
 app'' :: (Monad' f) => f (a -> b) -> f a -> f b
-app'' = undefined
+app'' f a = f `bind'` \fx -> a `bind'` \fa -> return' (fx fa)
+
+app''' :: (Monad f) => f (a -> b) -> f a -> f b
+app''' f a = do
+  fx <- f 
+  fa <- a
+  return (fx fa)
 
   
 
