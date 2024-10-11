@@ -46,7 +46,9 @@ uncurry' f (a,b) = f a b
 -- equaled to 0. 
 
 myDrop :: Int -> [a] -> [a]
-myDrop = undefined
+myDrop 0 x = x
+myDrop y [] = []
+myDrop y (x:xs) = myDrop (y-1) xs
 
 -- For your convenient, your implementation
 -- of myDrop should have the following
@@ -67,7 +69,8 @@ myDrop = undefined
 -- It concatenates a list of list into a list.
 -- You may use the built-in append function (++) from Haskell. 
 myConcat :: [[a]] -> [a]
-myConcat = undefined
+myConcat (x:xs) = x ++ myConcat xs
+myConcat [] = []
 
 -- Your function should at least satisfy the following
 -- test case. 
@@ -80,7 +83,8 @@ myConcat = undefined
 -- We may assume the input number is always greater
 -- or equaled to 0. 
 duplicate :: Int -> a -> [a]
-duplicate = undefined
+duplicate 0 _ = []
+duplicate x y = [y] ++ duplicate (x-1) y
 
 -- For example, 
 -- > duplicate 3 'a'
@@ -97,7 +101,9 @@ duplicate = undefined
 -- the following 'myElem' function that decides if an input is an element of a list.
 -- Note that the 'Eq a' type class is there so you can use the function (==) for equality comparison. 
 myElem :: Eq a => a -> [a] -> Bool
-myElem = undefined
+myElem _ [] = False
+myElem y (x:xs) = if y == x then True
+  else myElem y xs
 
 -- For example, 
 -- > myElem 1 [1,2,3,4]
@@ -121,4 +127,4 @@ myFilter f (x:xs) =
 -- Define another version of myFilter' that uses myfoldr without using
 -- pattern matching and recursion. 
 myFilter' :: (a -> Bool) -> [a] -> [a]
-myFilter' = undefined
+myFilter' f xs = myfoldr (\x acc -> if f x then x:acc else acc) [] xs

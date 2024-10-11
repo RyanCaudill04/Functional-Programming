@@ -1,5 +1,4 @@
 {-# LANGUAGE InstanceSigs #-}
-import Control.Exception (Exception(fromException))
 -- Note: Your file must be free of typing errors. If your file can not
 -- be loaded into ghci, then you will get 0 point. Please read the instructions
 -- for each problem carefully. Failure to follow the instructions may result in
