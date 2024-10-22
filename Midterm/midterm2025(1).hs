@@ -37,6 +37,10 @@ sequence' (x:xs) = do
   xs' <- sequence' xs
   return (x':xs')
 
+sequence'' :: Monad m => [m a] -> m [a]
+sequence'' [] = return []
+sequence'' (x:xs) = x >>= \ x' -> sequence'' xs >>= \ xs' -> return (x':xs')
+
 
 -- e.g. sequence' [Just 2, Just 3] == Just [2, 3]
 -- sequence' [Just 2, Just 3, Nothing] == Nothing
@@ -72,6 +76,12 @@ foldM' :: Monad m => (b -> a -> m b) -> b -> [a] -> m b
 foldM' f b [] = return b
 foldM' f b (x:xs) = f b x >>= \b' -> foldM' f b' xs
 
+foldM'' :: Monad m => (b -> a -> m b) -> b -> [a] -> m b
+foldM'' f b [] = return b
+foldM'' f b (x:xs) = do
+  b' <- f b x
+  foldM'' f b' xs
+
 
 -- e.g., foldM' (\ r x -> Just (r + x)) 0 [1, 2, 3, 4]
 -- == Just 10
@@ -86,4 +96,4 @@ foldM' f b (x:xs) = f b x >>= \b' -> foldM' f b' xs
 -- Problem 6 (2 points). Define mapM'' using foldM.
 -- Your mapM'' should behave the same as mapM'. 
 mapM'' :: Monad m => (a -> m b) -> [a] -> m [b]
-mapM'' f (x:xs) = undefined
+mapM'' f xs = foldM' (\ r x -> f x >>= \y -> return (r ++ [y])) [] xs
