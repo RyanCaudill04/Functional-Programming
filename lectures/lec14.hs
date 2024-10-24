@@ -1,4 +1,5 @@
 {-# LANGUAGE InstanceSigs #-}
+import Data.Char (isSpace)
 instance Functor Parser where
   fmap :: (a -> b) -> Parser a -> Parser b
   fmap f (P p) =
@@ -101,7 +102,12 @@ p `sepby1` sep =
 
 -- A simple CSV parser
 csv :: Parser [[String]]
-csv = many line
+csv = do
+  ls <- many line
+  eof
+  return ls
+
+
 
 line :: Parser [String]
 line = do
@@ -123,15 +129,13 @@ noneOf str = do
 content :: Parser String
 content = many1 (noneOf ",;.\n")
 
+stringWithSep :: Char -> [String] -> String
+stringWithSep c [] = []
+stringWithSep c [a] = a
+stringWithSep c (x:xs) = x ++ [c] ++ stringWithSep c xs
 
-
-
-  
-  
-  
-
-
-
-                         
-          
-    
+rmSpaces :: String -> String
+rmSpaces [] = []
+rmSpaces (x:xs) = 
+  if isSpace x then rmSpaces xs 
+  else x : rmSpaces xs
